@@ -1,0 +1,30 @@
+node = sigmoid(w0 * a0 + w1*a1.... + bias) // sigmoid function truncates to [0,1]
+
+[
+  w00, w01, ...w0n
+] * [a0, a1, a2..., an] = node
+
+next row of weights times a's equals another node 
+
+start with random weights n biases
+
+compare results(cost)
+  add up the squares of the results and expected results
+  (result - expected)^2 + ...
+  larger -> worse
+  average it
+
+  get the minimum
+  dk the function
+  based on slope, approach a bottom
+    how to find gradient 
+    step proportinal to slope
+
+    negative gradiant
+  gradient descent
+  higher change based on the weight magnitude and sign
+
+  u dont know/control what each neuron represents. u set them randomly and the computer keeps adjusting weights to minimize the cost function.
+  good at recognising when to do something, but not determining what that is
+    it can determine if a number is a 5, but doesnt rlly know what a 5 is
+
