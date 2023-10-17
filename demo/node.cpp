@@ -26,7 +26,7 @@ void nn::Node::process(float input) { // ensure output is between [-1,1]
         }
     } else{ // if this is in the first layer, we directly give it inputs
         // seperate transfer function
-        // ensure output is between (-1,1)
+        // ensure output is between (-1,1). sigmoid function?
         output = input;
     }
 }

@@ -64,3 +64,19 @@ void nn::Network::debug() {
          printf("\n");
      }
 }
+
+void nn::Network::mutate() {
+    // iterate through all nodes
+    // random chance of modifying weights. how likely?
+    // how much do we change the weights. should be adjusted, not reset
+    for (auto& layer : nodes) {
+        for (auto& node : layer) {
+            for (auto& [_, weight] : node.inputs){
+                if (Random::get(1,10) == 10){ // chance of adjusting weights
+                    weight += Random::get(-0.5, 0.5);
+                    weight = std::max(std::min(weight, 1.0f), -1.0f);
+                }
+            }
+        }
+    }
+}

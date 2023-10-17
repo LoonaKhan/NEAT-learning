@@ -23,6 +23,8 @@ namespace nn {
 
         void debug();
 
+        void mutate();
+
     };
 
 }

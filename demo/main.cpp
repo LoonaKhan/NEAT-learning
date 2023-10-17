@@ -6,7 +6,7 @@
 #include <stdio.h>
 using namespace nn;
 
-int main() {
+void processTest(){
     std::vector<float> inputs = {0.5, 0.4, 0.2};
     printf("inputs:\n");
     for (auto const& input : inputs)
@@ -23,4 +23,17 @@ int main() {
     for (auto node : output)
         printf("%f ",node.output);
     printf("\n");
+}
+
+void mutateTest(){
+    auto nwk = Network(3,3);
+    nwk.debug();
+    printf("\n");
+    nwk.mutate();
+    nwk.debug();
+}
+
+int main() {
+    mutateTest();
+    //processTest();
 }
