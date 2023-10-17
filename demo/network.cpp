@@ -33,17 +33,19 @@ std::vector<nn::Node> nn::Network::process(std::vector<float> inputs) {
             if (i == 0) { // if its in the first layer, pass in the inputs
                 nodes[i][j].process(inputs[j]);
             } else {
-
                 nodes[i][j].process();
-
             }
 
-            printf("[%d, %d]: %f\n",i,j, nodes[i][j].output);
+            //printf("[%d, %d]: %f\n",i,j, nodes[i][j].output);
 
         }
     }
 
-    // return the highest of the last layer of nodes
+    //todo: cant access the layer from outside the loop for some reason
+
+
+    /*for (auto node : nodes[i])
+        printf("%f\n", node.output);*/
     return nodes[i];
 }
 
@@ -55,7 +57,7 @@ void nn::Network::debug() {
          for (int node=0; node < nodes[layer].size(); node++) {
             printf("{[%d,%d] ", layer, node);
             for (auto & input : nodes[layer][node].inputs){
-                //printf("(%f,%f)", input.first->output, input.second);
+                printf("(%f,%f)", input.first->output, input.second);
             }
              printf("}");
          }

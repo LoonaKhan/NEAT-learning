@@ -1,6 +1,6 @@
 #include "node.h"
 
-nn::Node::Node(std::vector<Node> last_layer) {
+nn::Node::Node(std::vector<Node> &last_layer) {
     for (auto const& node : last_layer){
         // for each node, assign a weight to it and append to inputs
         std::pair<const Node*, float> p;

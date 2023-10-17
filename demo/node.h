@@ -11,7 +11,7 @@ struct Node {
     float output ;
 
     Node(); // for input nodes
-    Node(std::vector<Node> last_layer);
+    Node(std::vector<Node> &last_layer);
 
     void process(float input=0.0);
 
