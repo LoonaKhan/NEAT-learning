@@ -8,6 +8,7 @@
 #include <vector>
 #include "node.h"
 #include <algorithm>
+#include <stdio.h>
 
 
 namespace nn {
@@ -19,6 +20,8 @@ namespace nn {
         Network(int inputs, int layers);
 
         std::vector<Node> process(std::vector<float> inputs);
+
+        void debug();
 
     };
 

@@ -7,8 +7,8 @@ using Random = effolkronium::random_static;
 namespace nn {
 struct Node {
     // inputs, process, output
-    std::vector<std::pair<float, float>> inputs; // output of the node and its weight
-    float output = 0.0f;
+    std::vector<std::pair<const Node*, float>> inputs; // output of the node and its weight
+    float output ;
 
     Node(); // for input nodes
     Node(std::vector<Node> last_layer);
