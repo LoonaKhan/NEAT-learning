@@ -3,6 +3,10 @@
 //
 #include "SFML/Graphics.hpp"
 #include "player.h"
+#include "obstacle.h"
+#include "random.hpp"
+
+using Random = effolkronium::random_static;
 
 int main(){
     sf::RenderWindow window(sf::VideoMode(800,600), "sprite_test");
@@ -11,6 +15,7 @@ int main(){
     floor.setPosition(0, 580);
     floor.setFillColor(sf::Color::White);
     auto plr = Player(floor);
+    auto obs = Obstacle();
 
     while(window.isOpen()) {
 
@@ -22,6 +27,7 @@ int main(){
 
         // simulate
         plr.simulate();
+        obs.simulate();
 
         // controls
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
@@ -31,8 +37,10 @@ int main(){
             plr.duck();
         }
 
-        window.draw(plr);
         window.draw(floor);
+        window.draw(plr);
+        window.draw(obs);
+
 
 
         window.setFramerateLimit(60);
