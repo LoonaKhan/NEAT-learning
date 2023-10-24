@@ -13,10 +13,11 @@ private: // members
 public: // members
     double x,y,vx,vy;
     bool isDucking;
+    sf::RectangleShape &floor;
 
 public: // methods
 
-    Player();
+    Player(sf::RectangleShape &floor);
 
     void simulate();
 
@@ -24,6 +25,8 @@ public: // methods
     void jump(); // sets the velocity. can only jump if colliding with floor
 
     void duck();
+
+    // senses
 
     // deconstructor too
 

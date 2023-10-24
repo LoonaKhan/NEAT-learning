@@ -7,7 +7,10 @@
 int main(){
     sf::RenderWindow window(sf::VideoMode(800,600), "sprite_test");
 
-    auto plr = Player();
+    auto floor = sf::RectangleShape(sf::Vector2f(800, 20));
+    floor.setPosition(0, 580);
+    floor.setFillColor(sf::Color::White);
+    auto plr = Player(floor);
 
     while(window.isOpen()) {
 
@@ -24,8 +27,12 @@ int main(){
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
             plr.jump();
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+            plr.duck();
+        }
 
         window.draw(plr);
+        window.draw(floor);
 
 
         window.setFramerateLimit(60);

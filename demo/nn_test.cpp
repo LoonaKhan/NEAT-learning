@@ -34,6 +34,6 @@ void mutateTest(){
 }
 
 int main() {
-    mutateTest();
-    //processTest();
+    //mutateTest();
+    processTest();
 }
