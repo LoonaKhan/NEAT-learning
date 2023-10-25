@@ -20,8 +20,9 @@ Player::Player(sf::RectangleShape &floor)
 
 void Player::simulate() {
     this->move(this->vx, this->vy); // move
-    if (!this->getGlobalBounds().intersects(this->floor.getGlobalBounds())) // if not colliding with floor
-        this->vy+=0.2;//gravity
+    if (!this->getGlobalBounds().intersects(this->floor.getGlobalBounds())){ // if not colliding with floor
+        this->vy = std::min(5.0, this->vy+0.2); //gravity
+    }
     else{
         this->vy=0;
     }
