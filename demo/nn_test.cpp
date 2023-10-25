@@ -7,7 +7,7 @@
 using namespace nn;
 
 void processTest(){
-    std::vector<float> inputs = {0.5, 0.4, 0.2};
+    std::vector<float> inputs = {50, 40, 20};
     printf("inputs:\n");
     for (auto const& input : inputs)
         printf("%f ", input);

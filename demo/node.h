@@ -9,6 +9,7 @@ struct Node {
     // inputs, process, output
     std::vector<std::pair<const Node*, float>> inputs; // output of the node and its weight
     float output ;
+    float threshold;
 
     Node(); // for input nodes
     Node(std::vector<Node> &last_layer);
