@@ -4,6 +4,8 @@
 
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "vector"
+#include "obstacle.h"
 
 
 class Player : public sf::RectangleShape {
@@ -19,7 +21,7 @@ public: // methods
 
     Player(sf::RectangleShape &floor);
 
-    void simulate();
+    bool simulate(std::vector<Obstacle> &obstacles); // rename to isAlive?
 
     // Player controls
     void jump(); // sets the velocity. can only jump if colliding with floor

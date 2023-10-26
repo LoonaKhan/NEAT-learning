@@ -18,7 +18,7 @@ Player::Player(sf::RectangleShape &floor)
     this->isDucking = false;
 }
 
-void Player::simulate() {
+bool Player::simulate(std::vector<Obstacle> &obstacles) {
     this->move(this->vx, this->vy); // move
     if (!this->getGlobalBounds().intersects(this->floor.getGlobalBounds())){ // if not colliding with floor
         this->vy = std::min(5.0, this->vy+0.2); //gravity
@@ -33,7 +33,12 @@ void Player::simulate() {
     }
 
     // check if colliding with an obstacle, if so, delete
-    // maybe keep an array of obstacles we can check through
+    for (auto& obs : obstacles){
+        if (this->getGlobalBounds().intersects(obs.getGlobalBounds())){
+            return false; // died
+        }
+    }
+    return true; // alive
 }
 
 void Player::jump() {

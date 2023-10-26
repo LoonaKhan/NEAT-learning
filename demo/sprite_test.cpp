@@ -8,6 +8,8 @@
 
 using Random = effolkronium::random_static;
 
+std::vector<Obstacle> obstacles;
+
 int main(){
     sf::RenderWindow window(sf::VideoMode(800,600), "sprite_test");
 
@@ -15,7 +17,7 @@ int main(){
     floor.setPosition(0, 580);
     floor.setFillColor(sf::Color::White);
     auto plr = Player(floor);
-    auto obs = Obstacle();
+    //auto obs = Obstacle();
 
     while(window.isOpen()) {
 
@@ -25,9 +27,22 @@ int main(){
                 window.close();
         }
 
+        // randomly spawn obstacles
+        if (Random::get(1,200) == 1){ // 200 is frequency. todo: based on score?
+            obstacles.push_back(Obstacle());
+        }
+        printf("num obstacles %d\n", obstacles.size());
+        for (int i=0; i<obstacles.size(); i++) // remove excess obstacles
+            if (obstacles[i].getPosition().x<0)
+                obstacles.erase(obstacles.begin()+i);
+
         // simulate
-        plr.simulate();
-        obs.simulate();
+        bool plrIsAlive = plr.simulate(obstacles);
+        if (!plrIsAlive)
+            window.close(); // todo: make this just kill the player instead. player array or somn
+        for (auto& obs : obstacles) {
+            obs.simulate();
+        }
 
         // controls
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
@@ -39,7 +54,9 @@ int main(){
 
         window.draw(floor);
         window.draw(plr);
-        window.draw(obs);
+        for (auto& obs : obstacles){
+            window.draw(obs);
+        }
 
 
 
