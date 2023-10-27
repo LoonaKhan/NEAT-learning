@@ -5,6 +5,7 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "textures.h"
 
 class Obstacle : public sf::RectangleShape {
 public:

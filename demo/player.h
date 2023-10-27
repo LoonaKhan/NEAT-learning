@@ -6,6 +6,7 @@
 #include "SFML/Graphics.hpp"
 #include "vector"
 #include "obstacle.h"
+#include "textures.h"
 
 
 class Player : public sf::RectangleShape {

@@ -6,7 +6,9 @@
 
 
 Obstacle::Obstacle() {
-    this->setFillColor(sf::Color::Blue);
+    //this->setFillColor(sf::Color::Blue);
+    this->setTexture(&obs_textures[0]);
+    this->setScale(2.133, 1.83);
     this->setSize(sf::Vector2f(15, 35));
     this->setOrigin(15, 0);
     this->setPosition(800, 545);
