@@ -6,17 +6,18 @@
 
 
 Player::Player(sf::RectangleShape &floor)
-: floor(floor){
+: floor(floor), network(nn::Network(2,2,3,3)){
     this->setTexture(&plr_textures[0]);
 
     this->setScale(this->sprite_scale);
     this->setSize(this->size);
     this->setOrigin(0,this->size.y);
-    this->setPosition(10,(float)config["wsize"][1]-20);
+    this->setPosition(100,(float)config["wsize"][1]-20);
 
 
     this->vy=0, this->vx=0;
     this->isDucking = false;
+    //this->network = nn::Network(2,2,3,3);
 }
 
 bool Player::simulate(std::vector<Obstacle> &obstacles) {
@@ -62,4 +63,17 @@ void Player::duck() { // check if the hitbox is set properly
     this->setOrigin(0,this->duck_originy);
     // change sprite
     this->setTexture(&plr_textures[2]);
+}
+
+std::vector<float> Player::nearestObstacle() {
+    std::vector<float> ret = {0,0};
+    auto nearest_obs = obstacles[0];
+    for (const auto& obs : obstacles) {
+        float curr_dist = (this->getPosition().x - obs.getPosition().x); // magnitude of dist from
+        if (curr_dist < 0 and ((this->getPosition().x - nearest_obs.getPosition().x) > 0)){
+            nearest_obs = obs;
+        }
+    }
+    return {nearest_obs.getPosition().x,
+            nearest_obs.getPosition().y};
 }

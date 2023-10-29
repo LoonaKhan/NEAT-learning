@@ -16,8 +16,8 @@ using json = nlohmann::json;
 
 
 sf::Sound music;
-int max_obstacles = 1; // can gradually increase
-int max_distance = 55; // max distance in pixels between each obstacle
+int max_obstacles = 2; // can gradually increase
+int max_distance = 250; // max distance in pixels between each obstacle
 
 int main(){
     // load textures, config and audio files
@@ -26,7 +26,7 @@ int main(){
     loadConfig();
 
     // play music
-    music.setBuffer(athletic);
+    music.setBuffer(overworld);
     music.play();
     music.setLoop(true);
 
@@ -45,7 +45,7 @@ int main(){
 
     auto plr = Player(floor);
 
-    std::vector<Obstacle> obstacles = {Obstacle()};
+    obstacles = {Obstacle()};
 
     while(window.isOpen()) {
 
@@ -59,7 +59,7 @@ int main(){
         if (obstacles.size() < max_obstacles and (wsize.x - obstacles[obstacles.size()-1].getPosition().x-15 > max_distance)){ //todo: based on score?. maximum num of obstacles
             obstacles.push_back(Obstacle());
         }
-        printf("num obstacles %d\n", obstacles.size());
+        //printf("num obstacles %d\n", obstacles.size());
         for (int i=0; i<obstacles.size(); i++) // remove excess obstacles
             if (obstacles[i].getPosition().x<0)
                 obstacles.erase(obstacles.begin()+i);
@@ -69,12 +69,26 @@ int main(){
         for (auto& obs : obstacles) {
             obs.simulate();
         }
+        auto closest = plr.nearestObstacle(); // senses
+        sf::RectangleShape line(sf::Vector2f(closest[0]-plr.getPosition().x, 5));
+        line.setPosition(plr.getPosition());
+        line.setFillColor(sf::Color::Red);
 
         // controls
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
             plr.jump();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+            plr.duck();
+        }
+        printf("inputs: [%f, %f]\n", static_cast<float>(1/(1+exp(closest[0] - plr.getPosition().x))), static_cast<float>(1/(1+exp(closest[1] - plr.getPosition().y))));
+        std::vector<nn::Node> output = plr.network.process({
+                                                                   static_cast<float>(1/(1+exp(closest[0] - plr.getPosition().x))),
+                                                                   static_cast<float>(1/(1+exp(closest[1] - plr.getPosition().y)))
+        }); // todo: adjust NN to handle larger input numbers better
+        if (output[0].output > output[1].output){ // 1st node is greater
+            plr.jump();
+        } else {
             plr.duck();
         }
 
@@ -86,6 +100,7 @@ int main(){
             window.draw(obs);
         }
         window.draw(floor);
+        window.draw(line);
 
 
 

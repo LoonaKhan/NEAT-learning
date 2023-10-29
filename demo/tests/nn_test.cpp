@@ -1,7 +1,7 @@
 #include <iostream>
 
 //#include "node.h"
-#include "../nn/network.h"
+#include "../nn_models/network.h"
 //#include "fmt/printf.h"
 #include <stdio.h>
 using namespace nn;
@@ -13,20 +13,20 @@ void processTest(){
         printf("%f ", input);
     printf("\n\n");
 
-    auto nwk = Network(3,3);
+    auto nwk = Network(2,2,3,3);
 
-    nwk.process(inputs);
+    auto output = nwk.process(inputs);
     nwk.debug();
 
     printf("\noutputs:\n");
-    auto output = nwk.nodes[nwk.nodes.size()-1];
+    //auto output = nwk.nodes[nwk.nodes.size()-1];
     for (auto node : output)
         printf("%f ",node.output);
     printf("\n");
 }
 
 void mutateTest(){
-    auto nwk = Network(3,3);
+    auto nwk = Network(2,2,3,3);
     nwk.debug();
     printf("\n");
     nwk.mutate();

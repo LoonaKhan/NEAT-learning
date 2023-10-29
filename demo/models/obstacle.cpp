@@ -5,6 +5,8 @@
 #include "obstacle.h"
 
 
+
+
 Obstacle::Obstacle() {
     //this->setFillColor(sf::Color::Blue);
     this->setTexture(&obs_textures[0]);
@@ -21,3 +23,5 @@ void Obstacle::simulate() {
         //delete this;
 
 }
+
+std::vector<Obstacle> obstacles;

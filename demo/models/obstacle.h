@@ -7,6 +7,7 @@
 #include "SFML/Graphics.hpp"
 #include "../textures/textures.h"
 #include "../config/config.h"
+#include "vector"
 
 class Obstacle : public sf::RectangleShape {
 
@@ -21,5 +22,7 @@ public:
     void simulate();
 
 };
+
+extern std::vector<Obstacle> obstacles;
 
  //DEMO_OBSTACLE_H
