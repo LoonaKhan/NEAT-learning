@@ -81,10 +81,10 @@ int main(){
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
             plr.duck();
         }
-        printf("inputs: [%f, %f]\n", static_cast<float>(1/(1+exp(closest[0] - plr.getPosition().x))), static_cast<float>(1/(1+exp(closest[1] - plr.getPosition().y))));
+        printf("inputs: [%f, %f]\n", closest[0] - plr.getPosition().x, closest[1] - plr.getPosition().y);
         std::vector<nn::Node> output = plr.network.process({
-                                                                   static_cast<float>(1/(1+exp(closest[0] - plr.getPosition().x))),
-                                                                   static_cast<float>(1/(1+exp(closest[1] - plr.getPosition().y)))
+            closest[0] - plr.getPosition().x,
+            closest[1] - plr.getPosition().y
         }); // todo: adjust NN to handle larger input numbers better
         if (output[0].output > output[1].output){ // 1st node is greater
             plr.jump();

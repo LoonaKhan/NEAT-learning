@@ -5,30 +5,29 @@
 #include "network.h"
 
 
-nn::Network::Network(int inputs, int outputs, int layer_size, int layers) {
+nn::Network::Network(int inputs, int outputs, int layer_size, int hidden_layers) {
     // creates a neural network
-    for (int i=0; i<layers; i++){
+
+    std::vector<Node> flayer, llayer;
+    for (int inp=0; inp < inputs;inp++){
+        Node n = Node();
+        flayer.push_back(n);
+    }
+    nodes.push_back(flayer);
+
+    for (int i=0; i < hidden_layers; i++){
         std::vector<Node> layer;
-
-        if (i==0){ // input layer
-            for (int j=0; j<inputs; j++){
-                Node n = Node();
-                layer.push_back(n);
-            }
-        } else if (i== layers-1){
-            for (int j=0; j<outputs; j++){
-                Node n = Node(nodes[i-1]);
-                layer.push_back(n);
-            }
-        } else {
-            for (int j=0; j<layer_size; j++){
-                Node n = Node(nodes[i-1]);
-                layer.push_back(n);
-            }
+        for (int j=0; j<layer_size; j++){
+            Node n = Node(nodes[i]);
+            layer.push_back(n);
         }
-
         nodes.push_back(layer);
     }
+    for (int out=0; out<outputs; out++){
+        Node n = Node(nodes[nodes.size()-1]);
+        llayer.push_back(n);
+    }
+    nodes.push_back(llayer);
 }
 
 std::vector<nn::Node> nn::Network::process(std::vector<float> inputs) {

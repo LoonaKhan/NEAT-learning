@@ -7,9 +7,9 @@ nn::Node::Node(std::vector<Node> &last_layer) {
         p.first = &node;
         p.second = Random::get(-1.0, 1.0);
         inputs.push_back(p);
-        output = 0.0f;
-        threshold = Random::get(1,4); // maybe based on the size of the network? todo: optimal ways to determine threshold
     }
+    output = 0.0f;
+    threshold = Random::get(0.0,1.0); // maybe based on the size of the network? todo: optimal ways to determine threshold
 }
 
 nn::Node::Node(){
@@ -19,7 +19,7 @@ nn::Node::Node(){
 
 void nn::Node::process(float input) { // ensure output is between [-1,1]
 
-    //output = 0.0f;
+    output = 0.0f;
     if (input == 0.0) {
 
         // todo: simplify this. use matrices?
@@ -27,7 +27,7 @@ void nn::Node::process(float input) { // ensure output is between [-1,1]
             output += pair.first->output * pair.second;
         }
         output -= threshold;//output - threshold
-        output = 1/(1+exp(output));// sigmoid
+        output = 1/(1+exp(-output));// sigmoid
 
     } else{ // if this is in the first layer, we directly give it inputs
         // seperate transfer function

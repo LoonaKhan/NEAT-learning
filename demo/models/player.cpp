@@ -6,7 +6,7 @@
 
 
 Player::Player(sf::RectangleShape &floor)
-: floor(floor), network(nn::Network(2,2,3,3)){
+: floor(floor), network(nn::Network(2,2,3,5)){
     this->setTexture(&plr_textures[0]);
 
     this->setScale(this->sprite_scale);
@@ -17,7 +17,6 @@ Player::Player(sf::RectangleShape &floor)
 
     this->vy=0, this->vx=0;
     this->isDucking = false;
-    //this->network = nn::Network(2,2,3,3);
 }
 
 bool Player::simulate(std::vector<Obstacle> &obstacles) {
