@@ -17,7 +17,7 @@ nn::Node::Node(){
     output = 0.0f;
 }
 
-void nn::Node::process(float input) { // ensure output is between [-1,1]
+void nn::Node::activate(float input) { // ensure output is between [-1,1]
 
     output = 0.0f;
     if (input == 0.0) {
@@ -33,5 +33,15 @@ void nn::Node::process(float input) { // ensure output is between [-1,1]
         // seperate transfer function
         // ensure output is between (-1,1). sigmoid function?
         output = input;
+    }
+}
+
+void nn::Node::mutate() {
+    // cycles through a nodes weights and has a chance of mutating.
+    // mutations should be quite rare, but impactful
+    for (auto& [_, w] : this->inputs) {
+        if (Random::get(1,100) == 1){ // maybe rarer?
+            w += Random ::get(-0.5, 0.5);
+        }
     }
 }

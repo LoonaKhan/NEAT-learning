@@ -6,7 +6,7 @@ using Random = effolkronium::random_static;
 
 namespace nn {
 struct Node {
-    // inputs, process, output
+    // inputs, activate, output
     std::vector<std::pair<const Node*, float>> inputs; // output of the node and its weight
     float output ;
     float threshold;
@@ -14,9 +14,10 @@ struct Node {
     Node(); // for input nodes
     Node(std::vector<Node> &last_layer);
 
-    void process(float input=0.0);
+    void activate(float input=0.0);
 
     // mutate func
+    void mutate();
 };
 
 

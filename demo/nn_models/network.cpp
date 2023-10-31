@@ -37,9 +37,9 @@ std::vector<nn::Node> nn::Network::process(std::vector<float> inputs) {
         for (int j=0; j< nodes[i].size(); j++){
 
             if (i == 0) { // if its in the first layer, pass in the inputs
-                nodes[i][j].process(inputs[j]);
+                nodes[i][j].activate(inputs[j]);
             } else {
-                nodes[i][j].process();
+                nodes[i][j].activate();
             }
 
             //printf("[%d, %d]: %f\n",i,j, nodes[i][j].output);
