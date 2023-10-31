@@ -17,7 +17,7 @@ using json = nlohmann::json;
 
 sf::Sound music;
 int max_obstacles = 2; // can gradually increase
-int max_distance = 250; // max distance in pixels between each obstacle
+int max_distance = 200; // max distance in pixels between each obstacle
 
 int main(){
     // load textures, config and audio files
@@ -30,8 +30,9 @@ int main(){
     music.play();
     music.setLoop(true);
 
+    // draw window
     sf::Vector2f wsize = {(float)config["wsize"][0], (float)config["wsize"][1]};
-    sf::RenderWindow window(sf::VideoMode(wsize.x, wsize.y), "sprite_test"); // draw window
+    sf::RenderWindow window(sf::VideoMode(wsize.x, wsize.y), "sprite_test");
 
     // sprites
     sf::RectangleShape bg(sf::Vector2f(512, 432));
@@ -43,7 +44,9 @@ int main(){
     floor.setPosition(0, wsize.y-20);
     floor.setTexture(&floor_texture);
 
-    auto plr = Player(floor);
+    // setup players
+    for (int i=0; i<50; i++)
+        players.push_back(Player(&floor));
 
     obstacles = {Obstacle()};
 
@@ -55,62 +58,75 @@ int main(){
                 window.close();
         }
 
-        // randomly spawn obstacles
+        // randomly spawn obstacles if we arent at max obstacles and the last obstacle is sufficiently spaced from the 2nd last one
         if (obstacles.size() < max_obstacles and (wsize.x - obstacles[obstacles.size()-1].getPosition().x-15 > max_distance)){ //todo: based on score?. maximum num of obstacles
-            obstacles.push_back(Obstacle());
+            if (Random::get(1,100) == 1) obstacles.push_back(Obstacle());
         }
-        //printf("num obstacles %d\n", obstacles.size());
-        for (int i=0; i<obstacles.size(); i++) // remove excess obstacles
+
+        // remove excess obstacles
+        for (int i=0; i<obstacles.size(); i++)
             if (obstacles[i].getPosition().x<0)
                 obstacles.erase(obstacles.begin()+i);
 
-        // simulate
-        bool plrIsAlive = plr.simulate(obstacles);
-        for (auto& obs : obstacles) {
-            obs.simulate();
-        }
-        auto closest = plr.nearestObstacle(); // senses
-        sf::RectangleShape line(sf::Vector2f(closest[0]-plr.getPosition().x, 5));
-        line.setPosition(plr.getPosition());
-        line.setFillColor(sf::Color::Red);
-
-        // controls
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-            plr.jump();
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-            plr.duck();
-        }
-        printf("inputs: [%f, %f]\n", closest[0] - plr.getPosition().x, closest[1] - plr.getPosition().y);
-        std::vector<nn::Node> output = plr.network.process({
-            closest[0] - plr.getPosition().x,
-            closest[1] - plr.getPosition().y
-        }); // todo: adjust NN to handle larger input numbers better
-        if (output[0].output > output[1].output){ // 1st node is greater
-            plr.jump();
-        } else {
-            plr.duck();
-        }
-
-
         // drawing
         window.draw(bg);
-        window.draw(plr);
         for (auto& obs : obstacles){
+            obs.simulate();
             window.draw(obs);
         }
         window.draw(floor);
-        window.draw(line);
 
+        // simulate all players
+        std::vector<Player> toRemove;
+        for (auto& plr : players){
 
+            bool alive = plr.simulate(obstacles);
+            if (!alive) {
+                toRemove.push_back(plr);
+            }
 
+            if (obstacles.size() > 0){
+                auto closestObs = plr.nearestObstacle(obstacles);
+
+                auto editedObstacles = obstacles;
+                auto it = std::find(editedObstacles.begin(), editedObstacles.end(), closestObs);
+                if (editedObstacles.size() > 0)
+                    editedObstacles.erase(it);
+                printf("size of  obstacles: %d and edited obstacles: %d\n", obstacles.size(), editedObstacles.size());
+
+                auto nextClosestObs = plr.nearestObstacle(editedObstacles);
+
+                auto output = plr.network.process({
+                                                          closestObs.getPosition().x - plr.getPosition().x,
+                                                          closestObs.getPosition().y - plr.getPosition().y,
+                                                          nextClosestObs.getPosition().x - plr.getPosition().x,
+                                                          nextClosestObs.getPosition().y - plr.getPosition().y
+                                                  });
+                printf("inputs: [%f, %f, %f, %f]\n\n",
+                       closestObs.getPosition().x - plr.getPosition().x,
+                       closestObs.getPosition().y - plr.getPosition().y,
+                       nextClosestObs.getPosition().x - plr.getPosition().x,
+                       nextClosestObs.getPosition().y - plr.getPosition().y
+                );
+
+                if (output[0].output > output[1].output) {
+                    plr.jump();
+                } else {
+                    plr.duck();
+                }
+            }
+            window.draw(plr);
+        }
+        // remove old players
+        for (auto plr : toRemove) {
+            auto it = std::find(players.begin(), players.end(), plr);
+            players.erase(it);
+        }
+        
+        // draw stuff to screen
         window.setFramerateLimit(60);
         window.display();
         window.clear();
-
-
-        if (!plrIsAlive)
-            window.close(); // todo: make this just kill the player instead. player array or somn
 
     }
 }

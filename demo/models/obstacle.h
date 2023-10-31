@@ -21,6 +21,10 @@ public:
 
     void simulate();
 
+    bool operator==(const Obstacle& other) const {
+        return (this->getPosition() == other.getPosition());
+    }
+
 };
 
 extern std::vector<Obstacle> obstacles;

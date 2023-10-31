@@ -5,6 +5,7 @@
 #include "textures.h"
 #include "stdio.h"
 
+// set these texture vectors to unordered maps?
 std::vector<sf::Texture> plr_textures;
 std::vector<sf::Texture> obs_textures;
 sf::Texture floor_texture;
