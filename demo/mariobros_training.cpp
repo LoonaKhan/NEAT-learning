@@ -3,13 +3,13 @@
 //
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
-#include "../models/player.h"
-#include "../models/obstacle.h"
-#include "../random.hpp"
-#include "../textures/textures.h"
-#include "../music/music.h"
+#include "models/player.h"
+#include "models/obstacle.h"
+#include "random.hpp"
+#include "textures/textures.h"
+#include "music/music.h"
 #include "nlohmann/json.hpp"
-#include "../config/config.h"
+#include "config/config.h"
 
 using Random = effolkronium::random_static;
 using json = nlohmann::json;
@@ -45,12 +45,13 @@ int main(){
     floor.setTexture(&floor_texture);
 
     // setup players
-    std::vector<Player> deadPlayers;
     for (int i=0; i<50; i++)
         players.push_back(Player(&floor));
 
-    obstacles = {Obstacle()};
+    obstacles.push_back(Obstacle());
 
+
+    // GAME LOOP
     while(window.isOpen()) {
 
         sf::Event event;
@@ -124,6 +125,12 @@ int main(){
         for (auto plr : toRemove) {
             auto it = std::find(players.begin(), players.end(), *plr);
             players.erase(it);
+        }
+
+        // once all players are dead, process the population and prepare the next generation
+        if (players.empty() ) {
+            selectParents(deadPlayers);
+            break;
         }
         
         // draw stuff to screen

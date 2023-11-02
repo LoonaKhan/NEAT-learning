@@ -5,7 +5,8 @@
 #include "player.h"
 
 
-std::vector<Player> players = {};
+std::vector<Player> players;
+std::vector<Player> deadPlayers;
 int id = 0;
 
 Player::Player(sf::RectangleShape *floor)
@@ -22,6 +23,8 @@ Player::Player(sf::RectangleShape *floor)
     this->vy=0, this->vx=0;
     this->isDucking = false;
 }
+
+Player::Player(){}
 
 bool Player::simulate(std::vector<Obstacle> &obstacles) {
 
@@ -97,4 +100,59 @@ void Player::animate() {
     } else if (this->getTexture() == &plr_textures[4]) { // if walk1, set to walk2
         this->setTexture(&plr_textures[5]);
     }
+}
+
+
+std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayers) {
+    // find the sum of fitness values
+
+    // get a random number between 0 and sum
+    // see which number it is
+    // repeat
+
+
+    // get the sum of the fitness scores
+    int sum=0;
+    float avg;
+    for (auto& plr : deadPlayers){
+        sum += plr.framecounter;
+        printf("fitness score: %d\n",plr.framecounter);
+    }
+    avg = sum / deadPlayers.size();
+    printf("average fitness score of population: %f\n", avg);
+
+    auto first_parent_chance = Random::get(0, sum),
+    second_parent_chance = Random::get(0, sum);
+    nn::Network first_parent, second_parent;
+
+    // choose the NN for the first parent
+    Player chosenPlayer;
+    for (auto& plr : deadPlayers){
+        if (first_parent_chance < plr.framecounter) {
+            first_parent =plr.network;
+            chosenPlayer = plr;
+            printf("first parent fitness score: %d\n", plr.framecounter);
+            break;
+        } else {
+            first_parent_chance -= plr.framecounter;
+        }
+    }
+
+    // remove the chosen player so we dont choose it again
+    auto it = std::find(deadPlayers.begin(), deadPlayers.end(), chosenPlayer);
+    deadPlayers.erase(it);
+
+    // choose the NN for the 2nd parent
+    for (auto& plr : deadPlayers){
+        if (second_parent_chance < plr.framecounter) {
+            second_parent =plr.network;
+            printf("second parent fitness score: %d\n", plr.framecounter);
+            break;
+        } else {
+            second_parent_chance -= plr.framecounter;
+        }
+    }
+
+    return {first_parent, second_parent};
+
 }

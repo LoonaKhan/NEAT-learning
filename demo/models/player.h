@@ -21,20 +21,20 @@ private: // members
     double g = 0.2;
     double terminal_v = 5.0;
     int ID=id++;
-    int framecounter=0; // frame counter to keep track of animations. use as fitness score?
 
 public: // members
     double vx,vy;
     bool isDucking;
     sf::RectangleShape *floor;
     nn::Network network;
-    int time_lasted; // fitness score
+    int framecounter=0; // frame counter to keep track of animations. use as fitness score?
     // senses. nearest obs x and y? todo: did we have notes on this?
     // 3 actions. jump, duck or nothing
 
 public: // methods
 
     Player(sf::RectangleShape *floor);
+    Player();
 
     bool simulate(std::vector<Obstacle> &obstacles); // rename to isAlive?
 
@@ -61,4 +61,10 @@ private: // methods
 };
 
 extern std::vector<Player> players; // vector to hold players
+extern std::vector<Player> deadPlayers; // stores dead players
 
+std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayers);
+
+nn::Network createOffspring(std::pair<nn::Network, nn::Network> parents);
+
+void createPopulation(nn::Network offspring);

@@ -30,6 +30,8 @@ nn::Network::Network(int inputs, int outputs, int layer_size, int hidden_layers)
     nodes.push_back(llayer);
 }
 
+nn::Network::Network(){}
+
 std::vector<nn::Node> nn::Network::process(std::vector<float> inputs) {
     int i =0;
     for (; i < nodes.size(); i++){

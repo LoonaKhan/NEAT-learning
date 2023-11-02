@@ -19,6 +19,8 @@ namespace nn {
 
         Network(int inputs, int outputs, int layer_size, int hidden_layers); // todo: allow parameters for size of input hidden_layers and size of output hidden_layers seperately
 
+        Network();
+
         std::vector<Node> process(std::vector<float> inputs);
 
         void debug();
