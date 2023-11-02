@@ -45,6 +45,7 @@ int main(){
     floor.setTexture(&floor_texture);
 
     // setup players
+    std::vector<Player> deadPlayers;
     for (int i=0; i<50; i++)
         players.push_back(Player(&floor));
 
@@ -77,12 +78,14 @@ int main(){
         window.draw(floor);
 
         // simulate all players
-        std::vector<Player> toRemove;
+        std::vector<Player*> toRemove;
         for (auto& plr : players){
 
             bool alive = plr.simulate(obstacles);
             if (!alive) {
-                toRemove.push_back(plr);
+                deadPlayers.push_back(plr);
+                // remove from players
+                toRemove.push_back(&plr);
             }
 
             if (obstacles.size() > 0){
@@ -92,7 +95,7 @@ int main(){
                 auto it = std::find(editedObstacles.begin(), editedObstacles.end(), closestObs);
                 if (editedObstacles.size() > 0)
                     editedObstacles.erase(it);
-                printf("size of  obstacles: %d and edited obstacles: %d\n", obstacles.size(), editedObstacles.size());
+                //printf("size of  obstacles: %d and edited obstacles: %d\n", obstacles.size(), editedObstacles.size());
 
                 auto nextClosestObs = plr.nearestObstacle(editedObstacles);
 
@@ -102,12 +105,12 @@ int main(){
                                                           nextClosestObs.getPosition().x - plr.getPosition().x,
                                                           nextClosestObs.getPosition().y - plr.getPosition().y
                                                   });
-                printf("inputs: [%f, %f, %f, %f]\n\n",
+                /*printf("inputs: [%f, %f, %f, %f]\n\n",
                        closestObs.getPosition().x - plr.getPosition().x,
                        closestObs.getPosition().y - plr.getPosition().y,
                        nextClosestObs.getPosition().x - plr.getPosition().x,
                        nextClosestObs.getPosition().y - plr.getPosition().y
-                );
+                );*/
 
                 if (output[0].output > output[1].output) {
                     plr.jump();
@@ -119,7 +122,7 @@ int main(){
         }
         // remove old players
         for (auto plr : toRemove) {
-            auto it = std::find(players.begin(), players.end(), plr);
+            auto it = std::find(players.begin(), players.end(), *plr);
             players.erase(it);
         }
         
