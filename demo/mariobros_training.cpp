@@ -10,6 +10,7 @@
 #include "music/music.h"
 #include "nlohmann/json.hpp"
 #include "config/config.h"
+#include "objects.h"
 
 using Random = effolkronium::random_static;
 using json = nlohmann::json;
@@ -24,6 +25,7 @@ int main(){
     loadTextures();
     loadSoundBuffers();
     loadConfig();
+    loadGameFloor();
 
     // play music
     music.setBuffer(overworld);
@@ -31,7 +33,7 @@ int main(){
     music.setLoop(true);
 
     // draw window
-    sf::Vector2f wsize = {(float)config["wsize"][0], (float)config["wsize"][1]};
+    sf::Vector2f wsize = {(float)config["w_size"][0], (float)config["w_size"][1]};
     sf::RenderWindow window(sf::VideoMode(wsize.x, wsize.y), "sprite_test");
 
     // sprites
@@ -40,13 +42,13 @@ int main(){
     bg.setScale(1.5625, 1.8519);
     bg.setPosition(0,-120);
 
-    auto floor = sf::RectangleShape(sf::Vector2f(wsize.x, 20));
+    /*auto floor = sf::RectangleShape(sf::Vector2f(wsize.x, 20));
     floor.setPosition(0, wsize.y-20);
-    floor.setTexture(&floor_texture);
+    floor.setTexture(&floor_texture);*/
 
     // setup players
-    for (int i=0; i<50; i++)
-        players.push_back(Player(&floor));
+    for (int i=0; i<config["pop_size"]; i++)
+        players.push_back(Player(&gameFloor));
 
     obstacles.push_back(Obstacle());
 
@@ -76,7 +78,7 @@ int main(){
             obs.simulate();
             window.draw(obs);
         }
-        window.draw(floor);
+        window.draw(gameFloor);
 
         // simulate all players
         std::vector<Player*> toRemove;
@@ -129,8 +131,12 @@ int main(){
 
         // once all players are dead, process the population and prepare the next generation
         if (players.empty() ) {
-            selectParents(deadPlayers);
-            break;
+            obstacles.clear();
+            obstacles.push_back(Obstacle());
+            auto offspring = createOffspring(selectParents(deadPlayers));
+            offspring.debug(true);
+            createPopulation(offspring);
+            //break;
         }
         
         // draw stuff to screen

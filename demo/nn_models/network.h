@@ -23,7 +23,7 @@ namespace nn {
 
         std::vector<Node> process(std::vector<float> inputs);
 
-        void debug();
+        void debug(bool weights_only=false);
 
         void mutate();
 

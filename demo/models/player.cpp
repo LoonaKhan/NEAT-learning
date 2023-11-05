@@ -4,6 +4,8 @@
 
 #include "player.h"
 
+#include <utility>
+
 
 std::vector<Player> players;
 std::vector<Player> deadPlayers;
@@ -16,7 +18,7 @@ Player::Player(sf::RectangleShape *floor)
     this->setScale(this->sprite_scale);
     this->setSize(this->size);
     this->setOrigin(0,this->size.y);
-    this->setPosition(100,(float)config["wsize"][1]-20);
+    this->setPosition(100,(float)config["w_size"][1]-20);
     //this->ID = id++;
 
 
@@ -44,7 +46,7 @@ bool Player::simulate(std::vector<Obstacle> &obstacles) {
         this->animate();
     }
 
-    if (!this->getGlobalBounds().intersects(this->floor->getGlobalBounds())){ // if not colliding with floor
+    if (!this->getGlobalBounds().intersects(this->floor->getGlobalBounds())){ // if not colliding with gameFloor
         this->vy = std::min(terminal_v, this->vy+g); //gravity
         if (this->vy >0)
             this->setTexture(&plr_textures[7]);
@@ -104,11 +106,12 @@ void Player::animate() {
 
 
 std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayers) {
-    // find the sum of fitness values
-
-    // get a random number between 0 and sum
-    // see which number it is
-    // repeat
+    // Selects the parents for the next generation
+    // Players with higher fitness scores are more likely to get chosen
+    // we organize all players in a list and find the sum of their fitness scores
+    // we generate random numbers and iterate through the list and subtract fitness until we are below 0
+    // we then select that player as a parent and repeat for the 2nd parent
+    // todo: look into better algorithms for this
 
 
     // get the sum of the fitness scores
@@ -128,7 +131,7 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
     // choose the NN for the first parent
     Player chosenPlayer;
     for (auto& plr : deadPlayers){
-        if (first_parent_chance < plr.framecounter) {
+        if (first_parent_chance < plr.framecounter) { // todo: always subtract and check if <0
             first_parent =plr.network;
             chosenPlayer = plr;
             printf("first parent fitness score: %d\n", plr.framecounter);
@@ -153,6 +156,51 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
         }
     }
 
+    first_parent.debug(true);
+    printf("\n");
+    second_parent.debug(true);
+    printf("\n");
+
     return {first_parent, second_parent};
 
+}
+
+nn::Network createOffspring(std::pair<nn::Network, nn::Network> parents){
+    /*
+     * Here we create the offspring from the parents to serve as the base of the next generation
+     *
+     * We iterate through each node's weights in each layer of each network and determine if we should recombine.
+     * If so, we swap nodes from that node to the rest of the layer.
+     * This involves swapping those weight values.
+     */
+
+    auto p1 = parents.first.nodes,
+         p2 = parents.second.nodes;
+    auto offspring = parents.first;
+
+    for (int l = 0; l < p2.size(); l++) {
+        for (int n=0; n < p2[l].size(); n++) {
+            bool recombine = false;
+            for (int i = 0; i < p2[l][n].inputs.size(); i++){
+                if (!recombine and Random::get(1,5) == 1) // todo: dont make this a magic number
+                    recombine = true;
+                if (recombine) { // swap
+                    offspring.nodes[l][n].inputs[i].second = p2[l][n].inputs[i].second;
+                    // todo: maybe change threshold too?
+                }
+            }
+        }
+    }
+
+    return offspring;
+}
+
+void createPopulation(nn::Network offspring) {
+    Player og = Player(&gameFloor); // todo: move gameFloor to a global variable or somn
+    og.network = std::move(offspring);
+    players.assign(config["pop_size"], og); // offspring gets to participate with the new population
+
+    for (auto& plr : players) {
+        plr.network.mutate();
+    }
 }

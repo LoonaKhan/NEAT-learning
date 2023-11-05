@@ -9,6 +9,7 @@
 #include "../textures/textures.h"
 #include "../config/config.h"
 #include "../nn_models/network.h"
+#include "../objects.h"
 
 extern int id; // ID's to differentiate players
 class Player : public sf::RectangleShape {
@@ -28,18 +29,17 @@ public: // members
     sf::RectangleShape *floor;
     nn::Network network;
     int framecounter=0; // frame counter to keep track of animations. use as fitness score?
-    // senses. nearest obs x and y? todo: did we have notes on this?
     // 3 actions. jump, duck or nothing
 
 public: // methods
 
-    Player(sf::RectangleShape *floor);
+    Player(sf::RectangleShape *floor); // todo: reform to allow inputting a NN
     Player();
 
     bool simulate(std::vector<Obstacle> &obstacles); // rename to isAlive?
 
     // Player controls
-    void jump(); // sets the velocity. can only jump if colliding with floor
+    void jump(); // sets the velocity. can only jump if colliding with gameFloor
 
     void duck();
 
@@ -63,6 +63,7 @@ private: // methods
 extern std::vector<Player> players; // vector to hold players
 extern std::vector<Player> deadPlayers; // stores dead players
 
+// todo: put these into a seperate file for creating the next generation. breeeding?
 std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayers);
 
 nn::Network createOffspring(std::pair<nn::Network, nn::Network> parents);

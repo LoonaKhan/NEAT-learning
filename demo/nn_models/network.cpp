@@ -57,7 +57,7 @@ std::vector<nn::Node> nn::Network::process(std::vector<float> inputs) {
     return nodes[i-1];
 }
 
-void nn::Network::debug() {
+void nn::Network::debug(bool weights_only) {
     // prints debug info
     // arrangement of nodes as coordinates and their weights
      for (int layer = 0; layer< nodes.size(); layer++) {
@@ -65,9 +65,12 @@ void nn::Network::debug() {
          for (int node=0; node < nodes[layer].size(); node++) {
             printf("{[%d,%d] ", layer, node);
             for (auto & input : nodes[layer][node].inputs){
-                printf("(%f,%f)", input.first->output, input.second);
+                if (!weights_only)
+                    printf("(%f,%f)", input.first->output, input.second);
+                else
+                    printf("(%f)", input.second);
             }
-             printf("}");
+             printf("}  ");
          }
          printf("\n");
      }

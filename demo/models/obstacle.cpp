@@ -13,7 +13,7 @@ Obstacle::Obstacle() {
     this->setScale(2.133, 1.83); // todo: add bullet bill and revisit scale
     this->setSize(this->size);
     this->setOrigin(this->size.x, 0);
-    this->setPosition((float)config["wsize"][0], (float)config["wsize"][1]-55);
+    this->setPosition((float)config["w_size"][0], (float)config["w_size"][1]-55);
 }
 
 void Obstacle::simulate() {
