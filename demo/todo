@@ -1,0 +1,10 @@
+penalize uneccessary jumping
+    if nearest pipe distance > [given dist], penalize. -50?
+
+
+fix segfault
+
+
+draw diagnostic stuff on screen
+
+draw a NN visualization on screen
