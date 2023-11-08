@@ -49,12 +49,7 @@ std::vector<nn::Node> nn::Network::process(std::vector<float> inputs) {
         }
     }
 
-    //todo: cant access the layer from outside the loop for some reason
-
-
-    /*for (auto node : nodes[i])
-        printf("%f\n", node.output);*/
-    return nodes[i-1];
+    return nodes[nodes.end()-nodes.begin()-1];
 }
 
 void nn::Network::debug(bool weights_only) {

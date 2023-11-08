@@ -46,6 +46,7 @@ bool Player::simulate(std::vector<Obstacle> &obstacles) {
         this->animate();
     }
 
+    // falling
     if (!this->getGlobalBounds().intersects(this->floor->getGlobalBounds())){ // if not colliding with gameFloor
         this->vy = std::min(terminal_v, this->vy+g); //gravity
         if (this->vy >0)
@@ -57,11 +58,24 @@ bool Player::simulate(std::vector<Obstacle> &obstacles) {
         this->vy=0;
     }
 
+    // check if player has jumped over a pipe
+    // we determine this if (plr.x - obs.x) >=2. or the simulation speed * obs.speed
+
+
     // check if colliding with an obstacle, if so, delete
     for (auto& obs : obstacles){
         if (this->getGlobalBounds().intersects(obs.getGlobalBounds())){
+            this->evalFitness();
             return false; // died
         }
+
+        // check if player has jumped over an obstacle
+        // (plr.x - obs.x) <= obs.vx and >=0
+        auto horiz_dist = (this->getPosition().x - obs.getPosition().x);
+        if ( horiz_dist<= obs.vx and horiz_dist >= 0){
+            this->pipes_jumped++;
+        }
+
     }
     return true; // alive
 }
@@ -104,6 +118,12 @@ void Player::animate() {
     }
 }
 
+void Player::evalFitness(){
+    this->fitness_score += this->framecounter;
+    this->fitness_score -= 322; // for dying. todo: make this not a magic number
+    this->fitness_score += this->pipes_jumped * 400;
+}
+
 
 std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayers) {
     // Selects the parents for the next generation
@@ -115,29 +135,31 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
 
 
     // get the sum of the fitness scores
-    int sum=0;
+    int sum=0, highest=0;
     float avg;
     for (auto& plr : deadPlayers){
-        sum += plr.framecounter;
-        printf("fitness score: %d\n",plr.framecounter);
+        if (plr.fitness_score > highest)
+            highest = plr.fitness_score;
+        sum += plr.fitness_score;
+        //printf("fitness score: %d\n",plr.framecounter);
     }
     avg = sum / deadPlayers.size();
     printf("average fitness score of population: %f\n", avg);
+    printf("top performer: %d\n", highest);
 
-    auto first_parent_chance = Random::get(0, sum),
-    second_parent_chance = Random::get(0, sum);
+    int first_parent_chance = Random::get(0, sum), second_parent_chance;
     nn::Network first_parent, second_parent;
 
     // choose the NN for the first parent
     Player chosenPlayer;
     for (auto& plr : deadPlayers){
-        if (first_parent_chance < plr.framecounter) { // todo: always subtract and check if <0
+        if (first_parent_chance < plr.fitness_score) { // todo: always subtract and check if <0. -322 for fitness scores?
             first_parent =plr.network;
             chosenPlayer = plr;
-            printf("first parent fitness score: %d\n", plr.framecounter);
+            printf("first parent fitness score: %d\n", plr.fitness_score);
             break;
         } else {
-            first_parent_chance -= plr.framecounter;
+            first_parent_chance -= plr.fitness_score;
         }
     }
 
@@ -145,20 +167,23 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
     auto it = std::find(deadPlayers.begin(), deadPlayers.end(), chosenPlayer);
     deadPlayers.erase(it);
 
+    // re-evaluate the sum for the list
+    sum = 0;
+    for (auto& plr: deadPlayers){
+        sum += plr.fitness_score;
+    }
+    second_parent_chance = Random::get(0, sum);
+
     // choose the NN for the 2nd parent
     for (auto& plr : deadPlayers){
-        if (second_parent_chance < plr.framecounter) {
+        if (second_parent_chance < plr.fitness_score) {
             second_parent =plr.network;
-            printf("second parent fitness score: %d\n", plr.framecounter);
+            printf("second parent fitness score: %d\n", plr.fitness_score);
             break;
         } else {
-            second_parent_chance -= plr.framecounter;
+            second_parent_chance -= plr.fitness_score;
         }
     }
-
-    first_parent.debug(true);
-    printf("\n");
-    second_parent.debug(true);
     printf("\n");
 
     return {first_parent, second_parent};
@@ -200,7 +225,8 @@ void createPopulation(nn::Network offspring) {
     og.network = std::move(offspring);
     players.assign(config["pop_size"], og); // offspring gets to participate with the new population
 
-    for (auto& plr : players) {
-        plr.network.mutate();
+    for (int i =0; i <players.size(); i++) {
+        if (i==0) continue;
+        players[i].network.mutate();
     }
 }

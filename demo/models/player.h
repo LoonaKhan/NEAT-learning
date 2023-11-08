@@ -22,6 +22,7 @@ private: // members
     double g = 0.2;
     double terminal_v = 5.0;
     int ID=id++;
+    int pipes_jumped=0;
 
 public: // members
     double vx,vy;
@@ -31,6 +32,7 @@ public: // members
     int framecounter=0; // frame counter to keep track of animations. use as fitness score?
     // 3 actions. jump, duck or nothing
 
+    int fitness_score=0;
 public: // methods
 
     Player(sf::RectangleShape *floor); // todo: reform to allow inputting a NN
@@ -55,6 +57,8 @@ public: // methods
 
     // animation
     void animate();
+
+    void evalFitness();
 
 private: // methods
 

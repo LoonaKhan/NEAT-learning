@@ -42,10 +42,6 @@ int main(){
     bg.setScale(1.5625, 1.8519);
     bg.setPosition(0,-120);
 
-    /*auto floor = sf::RectangleShape(sf::Vector2f(wsize.x, 20));
-    floor.setPosition(0, wsize.y-20);
-    floor.setTexture(&floor_texture);*/
-
     // setup players
     for (int i=0; i<config["pop_size"]; i++)
         players.push_back(Player(&gameFloor));
@@ -80,6 +76,8 @@ int main(){
         }
         window.draw(gameFloor);
 
+
+
         // simulate all players
         std::vector<Player*> toRemove;
         for (auto& plr : players){
@@ -89,9 +87,10 @@ int main(){
                 deadPlayers.push_back(plr);
                 // remove from players
                 toRemove.push_back(&plr);
+                continue;
             }
 
-            if (obstacles.size() > 0){
+            if (obstacles.size() > 0){ //todo: make the fitness score increment even if there are no obstacles
                 auto closestObs = plr.nearestObstacle(obstacles);
 
                 auto editedObstacles = obstacles;
@@ -108,13 +107,8 @@ int main(){
                                                           nextClosestObs.getPosition().x - plr.getPosition().x,
                                                           nextClosestObs.getPosition().y - plr.getPosition().y
                                                   });
-                /*printf("inputs: [%f, %f, %f, %f]\n\n",
-                       closestObs.getPosition().x - plr.getPosition().x,
-                       closestObs.getPosition().y - plr.getPosition().y,
-                       nextClosestObs.getPosition().x - plr.getPosition().x,
-                       nextClosestObs.getPosition().y - plr.getPosition().y
-                );*/
 
+                // todo: determine largest element
                 if (output[0].output > output[1].output) {
                     plr.jump();
                 } else {
@@ -134,13 +128,14 @@ int main(){
             obstacles.clear();
             obstacles.push_back(Obstacle());
             auto offspring = createOffspring(selectParents(deadPlayers));
-            offspring.debug(true);
+            //offspring.debug(true);
             createPopulation(offspring);
+            deadPlayers.clear();
             //break;
         }
         
         // draw stuff to screen
-        window.setFramerateLimit(60);
+        window.setFramerateLimit(60*(int)config["sim_speed"]);
         window.display();
         window.clear();
 

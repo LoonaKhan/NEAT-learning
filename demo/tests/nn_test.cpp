@@ -7,13 +7,13 @@
 using namespace nn;
 
 void processTest(){
-    std::vector<float> inputs = {0.5, 0.3, 20};
+    std::vector<float> inputs = {698, -35, 698, -35};
     printf("inputs:\n");
     for (auto const& input : inputs)
         printf("%f ", input);
     printf("\n\n");
 
-    auto nwk = Network(2,2,5,5);
+    auto nwk = Network(4,2,3,5);
 
     auto output = nwk.process(inputs);
     nwk.debug();
@@ -35,5 +35,5 @@ void mutateTest(){
 
 int main() {
     //mutateTest();
-    processTest();
+    while (true){ processTest(); }
 }
