@@ -71,8 +71,8 @@ bool Player::simulate(std::vector<Obstacle> &obstacles) {
 
         // check if player has jumped over an obstacle
         // (plr.x - obs.x) <= obs.vx and >=0
-        auto horiz_dist = (this->getPosition().x - obs.getPosition().x);
-        if ( horiz_dist<= obs.vx and horiz_dist >= 0){
+        auto horiz_dist = (this->getPosition().x - obstacles.begin()->getPosition().x);
+        if ( horiz_dist>= obs.vx and horiz_dist <= 0){
             this->pipes_jumped++;
         }
 
@@ -120,8 +120,10 @@ void Player::animate() {
 
 void Player::evalFitness(){
     this->fitness_score += this->framecounter;
-    this->fitness_score -= 322; // for dying. todo: make this not a magic number
+    this->fitness_score -= 321; // for dying. todo: make this not a magic number
     this->fitness_score += this->pipes_jumped * 400;
+
+    //this->fitness_score = std::max(0.001f, this->fitness_score);
 }
 
 
@@ -147,10 +149,11 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
     printf("average fitness score of population: %f\n", avg);
     printf("top performer: %d\n", highest);
 
-    int first_parent_chance = Random::get(0, sum), second_parent_chance;
+    int first_parent_chance = Random::get(0, sum-1), second_parent_chance;
     nn::Network first_parent, second_parent;
 
     // choose the NN for the first parent
+    printf("fparent chance: %d, sum: %d\n", first_parent_chance, sum);
     Player chosenPlayer;
     for (auto& plr : deadPlayers){
         if (first_parent_chance < plr.fitness_score) { // todo: always subtract and check if <0. -322 for fitness scores?

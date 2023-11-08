@@ -92,7 +92,6 @@ int main(){
 
             if (obstacles.size() > 0){ //todo: make the fitness score increment even if there are no obstacles
                 auto closestObs = plr.nearestObstacle(obstacles);
-
                 auto editedObstacles = obstacles;
                 auto it = std::find(editedObstacles.begin(), editedObstacles.end(), closestObs);
                 if (editedObstacles.size() > 0)
@@ -108,7 +107,7 @@ int main(){
                                                           nextClosestObs.getPosition().y - plr.getPosition().y
                                                   });
 
-                // todo: determine largest element
+                // todo: determine largest element, so we can have 3 inputs?
                 if (output[0].output > output[1].output) {
                     plr.jump();
                 } else {
@@ -124,10 +123,12 @@ int main(){
         }
 
         // once all players are dead, process the population and prepare the next generation
-        if (players.empty() ) {
+        if (players.empty()) {
+            players.clear();
             obstacles.clear();
             obstacles.push_back(Obstacle());
-            auto offspring = createOffspring(selectParents(deadPlayers));
+            auto parents = selectParents(deadPlayers);
+            auto offspring = createOffspring(parents);
             //offspring.debug(true);
             createPopulation(offspring);
             deadPlayers.clear();
