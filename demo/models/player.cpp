@@ -18,7 +18,7 @@ int top_performer;
 int first_parent_fitness, second_parent_fitness;
 
 Player::Player(sf::RectangleShape *floor)
-: floor(floor), network(nn::Network(4,2,3,5)){
+: floor(floor), network(nn::Network(7,3,3,5)){
     this->setTexture(&plr_textures[0]);
 
     this->setScale(this->sprite_scale);
@@ -128,7 +128,7 @@ void Player::evalFitness(){
     this->fitness_score += this->framecounter;
     this->fitness_score -= 321; // for dying. todo: make this not a magic number
     this->fitness_score += this->pipes_jumped * 400;
-    this->fitness_score -= this->unecessary_jumps * 100;
+    //this->fitness_score -= this->unecessary_jumps * 100;
 
     this->fitness_score = std::max(1, this->fitness_score);
 }

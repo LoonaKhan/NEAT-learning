@@ -98,24 +98,34 @@ int main(){
             }
 
             if (obstacles.size() > 0){ //todo: make the fitness score increment even if there are no obstacles
+
+                // get senses
                 auto closestObs = plr.nearestObstacle(obstacles);
                 auto editedObstacles = obstacles;
                 auto it = std::find(editedObstacles.begin(), editedObstacles.end(), closestObs);
                 if (editedObstacles.size() > 0)
                     editedObstacles.erase(it);
-                //printf("size of  obstacles: %d and edited obstacles: %d\n", obstacles.size(), editedObstacles.size());
 
                 auto nextClosestObs = plr.nearestObstacle(editedObstacles);
 
                 auto output = plr.network.process({
-                                                          closestObs.getPosition().x - plr.getPosition().x,
-                                                          closestObs.getPosition().y - plr.getPosition().y,
-                                                          nextClosestObs.getPosition().x - plr.getPosition().x,
-                                                          nextClosestObs.getPosition().y - plr.getPosition().y
+                                                          plr.getPosition().y, // player's y position
+                                                          closestObs.getPosition().x - plr.getPosition().x, // nearest obs x
+                                                          closestObs.getGlobalBounds().height, // nearest obs height
+                                                          closestObs.getGlobalBounds().width, // nearest obs width
+                                                          (float)closestObs.vx, // nearest obs speed
+                                                          nextClosestObs.getPosition().x - plr.getPosition().x, // 2nd nearest obs x
+                                                          nextClosestObs.getPosition().x - closestObs.getPosition().x // distance between obstacles
                                                   });
 
                 // todo: determine largest element, so we can have 3 inputs?
-                if (output[0].output > output[1].output) {
+                int max_element = 0;
+                for (int i=0; i < output.size(); i++){
+                    if (output[i].output > output[max_element].output)
+                        max_element = i;
+                }
+
+                if (max_element == 0) {
                     //printf("jumping\n");
                     if (plr.vy ==0){
                         plr.jump();
@@ -123,9 +133,9 @@ int main(){
                             plr.unecessary_jumps++;
                         }
                     }
-                } else{
+                } else if (max_element ==1){
                     plr.duck();
-                }
+                } else {}
             }
             window.draw(plr);
         }

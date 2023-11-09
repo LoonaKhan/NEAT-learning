@@ -78,7 +78,7 @@ void nn::Network::mutate() {
     for (auto& layer : nodes) {
         for (auto& node : layer) {
             for (auto& [_, weight] : node.inputs){
-                if (Random::get(1,10) == 10){ // chance of adjusting weights
+                if (Random::get(1,50) == 10){ // chance of adjusting weights
                     weight += Random::get(-0.5, 0.5);
                     weight = std::max(std::min(weight, 1.0f), -1.0f);
                 }
