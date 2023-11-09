@@ -29,7 +29,8 @@ public: // members
     sf::RectangleShape *floor;
     nn::Network network;
     int framecounter=0; // frame counter to keep track of animations. use as fitness score?
-    // 3 actions. jump, duck or nothing
+
+    int unecessary_jumps = 0;
     int pipes_jumped=0;
     int fitness_score=0;
 public: // methods
@@ -65,6 +66,12 @@ private: // methods
 
 extern std::vector<Player> players; // vector to hold players
 extern std::vector<Player> deadPlayers; // stores dead players
+
+extern int generation;
+extern int sum_fitness;
+extern float avg_fitness;
+extern int top_performer;
+extern int first_parent_fitness, second_parent_fitness;
 
 // todo: put these into a seperate file for creating the next generation. breeeding?
 std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayers);

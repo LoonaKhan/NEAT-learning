@@ -11,6 +11,8 @@
 #include "nlohmann/json.hpp"
 #include "config/config.h"
 #include "objects.h"
+#include "text/text.h"
+#include <string>
 
 using Random = effolkronium::random_static;
 using json = nlohmann::json;
@@ -20,8 +22,13 @@ sf::Sound music;
 int max_obstacles = 2; // can gradually increase
 int max_distance = 200; // max distance in pixels between each obstacle
 
+
+
+
 int main(){
     // load textures, config and audio files
+    loadFonts();
+    loadText();
     loadTextures();
     loadSoundBuffers();
     loadConfig();
@@ -109,8 +116,14 @@ int main(){
 
                 // todo: determine largest element, so we can have 3 inputs?
                 if (output[0].output > output[1].output) {
-                    plr.jump();
-                } else {
+                    //printf("jumping\n");
+                    if (plr.vy ==0){
+                        plr.jump();
+                        if ((closestObs.getPosition().x - plr.getPosition().x) > 120) {
+                            plr.unecessary_jumps++;
+                        }
+                    }
+                } else{
                     plr.duck();
                 }
             }
@@ -124,6 +137,7 @@ int main(){
 
         // once all players are dead, process the population and prepare the next generation
         if (players.empty()) {
+            printf("Generation: %d\n", generation);
             players.clear();
             obstacles.clear();
             obstacles.push_back(Obstacle());
@@ -132,8 +146,20 @@ int main(){
             //offspring.debug(true);
             createPopulation(offspring);
             deadPlayers.clear();
+            generation++;
             //break;
         }
+
+        // draw test info to screen
+        generation_text.setString("Generation: " + std::to_string(generation));
+        top_performer_text.setString("Top performer of last gen: " + std::to_string(top_performer));
+        first_parent_text.setString("First parent fitness score: " + std::to_string(first_parent_fitness));
+        second_parent_text.setString("Second parent fitness score: "+ std::to_string(second_parent_fitness));
+        window.draw(generation_text);
+        window.draw(top_performer_text);
+        window.draw(first_parent_text);
+        window.draw(second_parent_text);
+
         
         // draw stuff to screen
         window.setFramerateLimit(60*(int)config["sim_speed"]);

@@ -12,8 +12,6 @@ sf::Texture floor_texture;
 
 sf::Texture bg_texture;
 
-
-
 void loadTextures(){
     loadPlrTextures();
     loadObsTextures();

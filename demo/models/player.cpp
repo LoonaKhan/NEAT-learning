@@ -11,6 +11,12 @@ std::vector<Player> players;
 std::vector<Player> deadPlayers;
 int id = 0;
 
+int generation=0;
+int sum_fitness;
+float avg_fitness;
+int top_performer;
+int first_parent_fitness, second_parent_fitness;
+
 Player::Player(sf::RectangleShape *floor)
 : floor(floor), network(nn::Network(4,2,3,5)){
     this->setTexture(&plr_textures[0]);
@@ -122,8 +128,9 @@ void Player::evalFitness(){
     this->fitness_score += this->framecounter;
     this->fitness_score -= 321; // for dying. todo: make this not a magic number
     this->fitness_score += this->pipes_jumped * 400;
+    this->fitness_score -= this->unecessary_jumps * 100;
 
-    //this->fitness_score = std::max(0.001f, this->fitness_score);
+    this->fitness_score = std::max(1, this->fitness_score);
 }
 
 
@@ -137,28 +144,28 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
 
 
     // get the sum of the fitness scores
-    int sum=0, highest=0;
-    float avg;
+    sum_fitness=0;
+    top_performer=0;
     for (auto& plr : deadPlayers){
-        if (plr.fitness_score > highest)
-            highest = plr.fitness_score;
-        sum += plr.fitness_score;
+        if (plr.fitness_score > top_performer)
+            top_performer = plr.fitness_score;
+        sum_fitness += plr.fitness_score;
         //printf("fitness score: %d\n",plr.framecounter);
     }
-    avg = sum / deadPlayers.size();
-    printf("average fitness score of population: %f\n", avg);
-    printf("top performer: %d\n", highest);
+    avg_fitness = sum_fitness / deadPlayers.size();
+    printf("average fitness score of population: %f\n", avg_fitness);
+    printf("top performer: %d\n", top_performer);
 
-    int first_parent_chance = Random::get(0, sum-1), second_parent_chance;
+    int first_parent_chance = Random::get(0, sum_fitness-1), second_parent_chance;
     nn::Network first_parent, second_parent;
 
     // choose the NN for the first parent
-    printf("fparent chance: %d, sum: %d\n", first_parent_chance, sum);
     Player chosenPlayer;
     for (auto& plr : deadPlayers){
         if (first_parent_chance < plr.fitness_score) { // todo: always subtract and check if <0. -322 for fitness scores?
             first_parent =plr.network;
             chosenPlayer = plr;
+            first_parent_fitness = plr.fitness_score;
             printf("first parent fitness score: %d\n", plr.fitness_score);
             break;
         } else {
@@ -171,16 +178,17 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
     deadPlayers.erase(it);
 
     // re-evaluate the sum for the list
-    sum = 0;
+    sum_fitness = 0;
     for (auto& plr: deadPlayers){
-        sum += plr.fitness_score;
+        sum_fitness += plr.fitness_score;
     }
-    second_parent_chance = Random::get(0, sum);
+    second_parent_chance = Random::get(0, sum_fitness);
 
     // choose the NN for the 2nd parent
     for (auto& plr : deadPlayers){
         if (second_parent_chance < plr.fitness_score) {
             second_parent =plr.network;
+            second_parent_fitness = plr.fitness_score;
             printf("second parent fitness score: %d\n", plr.fitness_score);
             break;
         } else {

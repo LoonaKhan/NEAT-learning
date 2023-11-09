@@ -1,7 +1,7 @@
 penalize uneccessary jumping
     if nearest pipe distance > [given dist], penalize. -50?
+    redo pythag theorum
 
-
-draw diagnostic stuff on screen
+top performer more likely to be chosen
 
 draw a NN visualization on screen
