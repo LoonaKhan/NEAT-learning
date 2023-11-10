@@ -9,13 +9,14 @@
 #include "../textures/textures.h"
 #include "../config/config.h"
 #include "../nn_models/network.h"
-#include "../objects.h"
+#include "../floor/floor.h"
 
 extern int id; // ID's to differentiate players
 class Player : public sf::RectangleShape {
 
 private: // members
     sf::Vector2f size = {20, 30};
+    sf::Vector2f ducking_size = {20,15};
     sf::Vector2f sprite_scale = {1.25, 1.25};
     int duck_originy = 30; // we move the origin of the sprite here when ducking
     int jump_speed = 6;// todo: increase this? redo calculations though
@@ -71,6 +72,7 @@ extern int generation;
 extern int sum_fitness;
 extern float avg_fitness;
 extern int top_performer;
+extern int top_performer_alltime;
 extern int first_parent_fitness, second_parent_fitness;
 
 // todo: put these into a seperate file for creating the next generation. breeeding?

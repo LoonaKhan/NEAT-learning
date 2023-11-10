@@ -10,7 +10,7 @@
 #include "music/music.h"
 #include "nlohmann/json.hpp"
 #include "config/config.h"
-#include "objects.h"
+#include "floor/floor.h"
 #include "text/text.h"
 #include <string>
 
@@ -66,8 +66,10 @@ int main(){
         }
 
         // randomly spawn obstacles if we arent at max obstacles and the last obstacle is sufficiently spaced from the 2nd last one
-        if (obstacles.size() < max_obstacles and (wsize.x - obstacles[obstacles.size()-1].getPosition().x-15 > max_distance)){ //todo: based on score?. maximum num of obstacles
-            if (Random::get(1,100) == 1) obstacles.push_back(Obstacle());
+        auto c = Random::get(1,50);
+        printf("%d, obstacles size: %d, dist: %f\n", c, obstacles.size(), wsize.x - obstacles[obstacles.size()-1].getPosition().x-15);
+        if (obstacles.size() < max_obstacles and (obstacles.size()==0 or (wsize.x - obstacles[obstacles.size()-1].getPosition().x-15 > max_distance))){ //todo: based on score?. maximum num of obstacles
+            if ( c== 1) obstacles.push_back(Obstacle());
         }
 
         // remove excess obstacles
@@ -111,12 +113,16 @@ int main(){
                 auto output = plr.network.process({
                                                           plr.getPosition().y, // player's y position
                                                           closestObs.getPosition().x - plr.getPosition().x, // nearest obs x
-                                                          closestObs.getGlobalBounds().height, // nearest obs height
+                                                          (float)config["w_size"][1] - closestObs.getPosition().y, // nearest obs height
                                                           closestObs.getGlobalBounds().width, // nearest obs width
                                                           (float)closestObs.vx, // nearest obs speed
-                                                          nextClosestObs.getPosition().x - plr.getPosition().x, // 2nd nearest obs x
+                                                          nextClosestObs.getPosition().x - plr.getPosition().x, // 2nd nearest obs x,
+                                                          (float)config["w_size"][1] - nextClosestObs.getPosition().y, // 2nd nearest obstacle height
+                                                          closestObs.getGlobalBounds().width, // 2nd nearest obstacle width
                                                           nextClosestObs.getPosition().x - closestObs.getPosition().x // distance between obstacles
                                                   });
+                //printf("plr hight: %f\n",  - plr.getPosition().y);
+
 
                 // todo: determine largest element, so we can have 3 inputs?
                 int max_element = 0;
@@ -129,9 +135,6 @@ int main(){
                     //printf("jumping\n");
                     if (plr.vy ==0){
                         plr.jump();
-                        if ((closestObs.getPosition().x - plr.getPosition().x) > 120) {
-                            plr.unecessary_jumps++;
-                        }
                     }
                 } else if (max_element ==1){
                     plr.duck();
@@ -162,13 +165,15 @@ int main(){
 
         // draw test info to screen
         generation_text.setString("Generation: " + std::to_string(generation));
-        top_performer_text.setString("Top performer of last gen: " + std::to_string(top_performer));
         first_parent_text.setString("First parent fitness score: " + std::to_string(first_parent_fitness));
         second_parent_text.setString("Second parent fitness score: "+ std::to_string(second_parent_fitness));
+        top_performer_text.setString("Top performer of last gen: " + std::to_string(top_performer));
+        top_performer_alltime_text.setString("Top performer of all time: " + std::to_string(top_performer_alltime));
         window.draw(generation_text);
-        window.draw(top_performer_text);
         window.draw(first_parent_text);
         window.draw(second_parent_text);
+        window.draw(top_performer_text);
+        window.draw(top_performer_alltime_text);
 
         
         // draw stuff to screen

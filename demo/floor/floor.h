@@ -5,8 +5,8 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
-#include "config/config.h"
-#include "textures/textures.h"
+#include "../config/config.h"
+#include "../textures/textures.h"
 
 
 extern sf::RectangleShape gameFloor;

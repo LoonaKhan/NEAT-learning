@@ -7,7 +7,7 @@
 #include "SFML/Graphics.hpp"
 
 extern sf::Font gotham_font;
-extern sf::Text generation_text,  top_performer_text, first_parent_text, second_parent_text;
+extern sf::Text generation_text,  top_performer_text,top_performer_alltime_text, average_text, first_parent_text, second_parent_text;
 
 void loadFonts();
 void loadText();

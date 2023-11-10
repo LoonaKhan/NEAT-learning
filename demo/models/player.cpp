@@ -15,10 +15,11 @@ int generation=0;
 int sum_fitness;
 float avg_fitness;
 int top_performer;
+int top_performer_alltime=0;
 int first_parent_fitness, second_parent_fitness;
 
 Player::Player(sf::RectangleShape *floor)
-: floor(floor), network(nn::Network(7,3,3,5)){
+: floor(floor), network(nn::Network(9,3,3,5)){
     this->setTexture(&plr_textures[0]);
 
     this->setScale(this->sprite_scale);
@@ -96,7 +97,7 @@ void Player::jump() {
 void Player::duck() { // check if the hitbox is set properly
     this->setSize(this->size);
     this->isDucking = true;
-    this->setOrigin(0,this->duck_originy);
+    this->setOrigin(0,this->duck_originy); // todo: fix ducking. draw hitboxes?
     // change sprite
     this->setTexture(&plr_textures[2]);
 }
@@ -127,8 +128,7 @@ void Player::animate() {
 void Player::evalFitness(){
     this->fitness_score += this->framecounter;
     this->fitness_score -= 321; // for dying. todo: make this not a magic number
-    this->fitness_score += this->pipes_jumped * 400;
-    //this->fitness_score -= this->unecessary_jumps * 100;
+    this->fitness_score += this->pipes_jumped * 321;
 
     this->fitness_score = std::max(1, this->fitness_score);
 }
@@ -149,6 +149,8 @@ std::pair<nn::Network, nn::Network> selectParents(std::vector<Player> deadPlayer
     for (auto& plr : deadPlayers){
         if (plr.fitness_score > top_performer)
             top_performer = plr.fitness_score;
+        if (top_performer > top_performer_alltime)
+            top_performer_alltime = top_performer;
         sum_fitness += plr.fitness_score;
         //printf("fitness score: %d\n",plr.framecounter);
     }

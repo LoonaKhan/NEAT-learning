@@ -2,7 +2,7 @@
 // Created by loona on 05/11/23.
 //
 
-#include "objects.h"
+#include "floor.h"
 
 
 sf::RectangleShape gameFloor;

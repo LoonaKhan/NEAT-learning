@@ -1,7 +1,8 @@
-penalize uneccessary jumping
-    if nearest pipe distance > [given dist], penalize. -50?
-    redo pythag theorum
-
 top performer more likely to be chosen
+    first parents is always top performer?
+    2nd is random?
+    or we make performers above average x2?
+
+    when making parents, we make the higher fitness parent the base?
 
 draw a NN visualization on screen
