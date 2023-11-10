@@ -9,6 +9,7 @@
 #include "../config/config.h"
 #include "../floor/floor.h"
 #include "../random.hpp"
+#include "../rand/rand.h"
 #include "vector"
 
 class Obstacle : public sf::RectangleShape {

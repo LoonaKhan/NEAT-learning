@@ -15,7 +15,7 @@ Obstacle::Obstacle() {
      * based on chance
      */
 
-    if (effolkronium::random_static::get(1,2)== 2){ // pipe
+    if (Seeded::get(1,2)== 2){ // pipe
         // add another pipe that is wider. calc how wide it can be at max
         this->setTexture(&obs_textures[0]);
         this->setScale(2.133, 1.83); // todo: add bullet bill and revisit scale

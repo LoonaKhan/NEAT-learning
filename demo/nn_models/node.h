@@ -1,5 +1,6 @@
 #include <vector>
 #include "../random.hpp"
+
 using Random = effolkronium::random_static;
 
 // organize this, possibly a inputNode subclass

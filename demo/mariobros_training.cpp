@@ -12,6 +12,7 @@
 #include "config/config.h"
 #include "floor/floor.h"
 #include "text/text.h"
+#include "rand/rand.h"
 #include <string>
 
 using Random = effolkronium::random_static;
@@ -26,6 +27,10 @@ int max_distance = 200; // max distance in pixels between each obstacle
 
 
 int main(){
+    // set seed
+    //Seeded::seed(1);
+    setSeed();
+
     // load textures, config and audio files
     loadFonts();
     loadText();
@@ -66,9 +71,8 @@ int main(){
         }
 
         // randomly spawn obstacles if we arent at max obstacles and the last obstacle is sufficiently spaced from the 2nd last one
-        auto c = Random::get(1,50);
-        printf("%d, obstacles size: %d, dist: %f\n", c, obstacles.size(), wsize.x - obstacles[obstacles.size()-1].getPosition().x-15);
         if (obstacles.size() < max_obstacles and (obstacles.size()==0 or (wsize.x - obstacles[obstacles.size()-1].getPosition().x-15 > max_distance))){ //todo: based on score?. maximum num of obstacles
+            auto c = Seeded::get(1,50);
             if ( c== 1) obstacles.push_back(Obstacle());
         }
 
@@ -153,14 +157,16 @@ int main(){
             printf("Generation: %d\n", generation);
             players.clear();
             obstacles.clear();
-            obstacles.push_back(Obstacle());
+
             auto parents = selectParents(deadPlayers);
             auto offspring = createOffspring(parents);
-            //offspring.debug(true);
+
             createPopulation(offspring);
             deadPlayers.clear();
             generation++;
-            //break;
+
+            setSeed();
+            obstacles.push_back(Obstacle());
         }
 
         // draw test info to screen
