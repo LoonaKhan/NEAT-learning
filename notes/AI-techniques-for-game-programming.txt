@@ -1,0 +1,38 @@
+zchromosomes are bit strings
+  encode to be a gene.
+  how to encode genes?? big question
+
+define the crossover rate, mut rate, pop size, chromie length
+population is 2x the chromie len 
+
+each gen
+
+epoch
+  test each pop member
+  eval fitness
+  create new pop
+    select 2 chromies, based on fitness
+    use crossover and mutation rates to create 2 offspring
+
+crossover
+  rate = 0.7. can change
+  if rand <0.7 choose a random index to cross over at
+  return 2 chromies
+
+mutate
+  rate = 0.001
+  go over each chromie's bits to alter
+
+
+elitism, guarantee X num of agents are in the new generation
+
+pathfinding
+  series of instructions are the chromies 
+
+
+when u need valid chromosomes:
+partially mapped crossover
+  2 crossover points, map the numbers between and swap those instances
+exchange mutation
+  swap 2 nums in a chromie 
+page 194
