@@ -35,4 +35,26 @@ partially mapped crossover
   2 crossover points, map the numbers between and swap those instances
 exchange mutation
   swap 2 nums in a chromie 
-page 194
+
+
+
+// DIFFERENT METHODS (PG 194)
+
+many different selection methods
+  elitism
+    keep a small percentage. 2-5%
+    good idea to have some elitism 
+  keep in mind:
+    converging too quickly might not get the solution
+  keep different functions on hand
+
+  SteadyStateSelection(SSS)
+    remove X worst performers
+    continues as normal
+    not advised
+  StochasticUniversalSampling(SUS)
+    *
+    good for when u do roulette wheel in a small population 
+
+  
+page 243
