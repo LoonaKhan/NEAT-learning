@@ -21,6 +21,7 @@ crossover
 
 mutate
   rate = 0.001
+  for floats: 0.1 
   go over each chromie's bits to alter
 
 
@@ -57,4 +58,13 @@ many different selection methods
     good for when u do roulette wheel in a small population 
 
   
-page 243
+we can set threshold as a weight 
+  just add -threshold to the activation equation
+  make sure u dont pass it in to the next layer
+
+  this way, threshold evolves with the weights
+
+
+
+
+  page 296
