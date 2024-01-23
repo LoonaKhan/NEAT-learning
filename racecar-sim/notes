@@ -1,0 +1,11 @@
+fitness
+    points for crossing the finish line
+    -points for laptime
+    -points for going backwards
+    -points for colliding with a barrier
+
+
+todo:
+    make a collision function
+    get the sprite to work
+        needs to rotate, keep size and not get distorted when rotating

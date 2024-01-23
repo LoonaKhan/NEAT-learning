@@ -1,0 +1,113 @@
+node based encoding:
+  each neuron's information is on a single gene
+    which gene its connected to
+    each connections weights
+
+  can just use a vector of genes and each gene has a list of nodes its connected to
+  iterate through list to simulate them
+
+  crossover method needs to ensure neurons dont lack connections (inbound, outbound)
+  mutation:
+    
+
+
+  genome:
+    vector: genes
+
+  gene:
+    vector<pair of floats>: inbound connections (id's) and associated weights 
+    id:   // if we remove nodes, we change the index of all nodes, so we need a seperate unchanging id. unless dicts are used 
+    output
+    sum function
+    activation function 
+
+  constructor(inputs, outputs, hiddennodes):
+    create a number of input genes and append them. id's 0-size(inputs)
+    after, create a number of output genes? or just filter ouputs?      id's: size(inputs) + size(hidden) +i for output 
+    then create hidden nodes
+    use enums to assign types
+
+    input genes have no connections into them aside from inputs
+    output genes cannot be inbound connections to other nodes
+
+  feed-forward:
+    take inputs (numbered 0-size(inputs)) and feed into inputs
+    process nodes until you reach outputs
+    return values of output nodes
+
+  mutate:
+    add/remove a gene 
+    add/remove a connection from a gene
+      can only add an id that already exists
+
+  crossover:
+    swap a random gene and its connections
+    ensure that all genes are connected.
+      check for genes without inputs
+      ensure other genes have them as inputs 
+
+
+
+
+
+NEAT
+  link genes
+    information about the nodes its connectied to
+    weight
+    enabled
+    recurrent (feeds back into itself)
+    innovation number 
+  neuron genes
+    the function (input/output, hidden, bias, none) enum 
+    id number
+    splitx, splity
+      inputs y=0
+      outputs y=1
+
+genome:
+  list of links
+  list of nodes
+  id
+  fitness
+
+  mutate
+    add a link
+    add a neuron
+    change weights
+    alter respond curve of an activation func in a neuron
+
+  innovations
+    everytime a change is made, its an innovation
+    we check if that innovation has been done before,
+      if so, we give it the innovation id number of the existing innovation
+      if not, give it a new innovation id and add it to our database of innovations
+
+    struct:
+      type (link or neuron) enum
+      int ID
+      int neuronIn
+      int NeuronOut
+      neurontype neurontype enum
+
+    creating links(mutation rate, chance of looping, innovationdatabase, numTimesTryloop, numTimesTryLink)
+
+      check if n should be reccurant
+        try to find a random neuron to loop
+        needs to not already loop on itself
+        tries this X times, dont do looped
+      look for 2 unlinked neurons
+        can only do so if neurons arent linked
+        try this X times, if not, dont do it
+
+      check to see if weve made this innovation
+      if so, give it the id of that innovation, or if its new, negative
+
+
+    createNeuron(mut rate, innovation database, numTryFindOldLink)
+      select a link that isnt disabled or recurrent or a bias neuron 
+        try this X times
+      disable the old link, create 2 new ones. keep the old weight for one of the links
+      other weight is set to 1
+        minimizes disruption
+
+
