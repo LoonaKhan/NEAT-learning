@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include "../random.hpp"
 
@@ -8,17 +10,18 @@ using Random = effolkronium::random_static;
 namespace nn {
 struct Node {
     // inputs, activate, output
-    std::vector<std::pair<const Node*, float>> inputs; // output of the node and its weight
-    float output ;
-    float threshold;
+    std::vector<const Node*> inputs; // output of the node and its weight
+    //int num_inputs;
+    std::vector<float> weights; // contains weights. threshold included so we can easily modify it
+    float output;
 
     Node(); // for input nodes
     Node(std::vector<Node> &last_layer);
 
-    void activate(float input=0.0);
+    void activate(float input);// for the first layer
 
-    // mutate func
-    void mutate();
+    void activate(); // all other layers
+
 };
 
 

@@ -1,8 +1,7 @@
-top performer more likely to be chosen
-    first parents is always top performer?
-    2nd is random?
-    or we make performers above average x2?
+recombination function adjust.
+    based always on the parent with the higher fitness score
+    adjust chance of recombination?
 
-    when making parents, we make the higher fitness parent the base?
+check if pipes_jumped includes bills
 
 draw a NN visualization on screen

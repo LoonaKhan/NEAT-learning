@@ -13,6 +13,7 @@
 #include "floor/floor.h"
 #include "text/text.h"
 #include "rand/rand.h"
+#include "ga_models/genome.h"
 #include <string>
 
 using Random = effolkronium::random_static;
@@ -154,14 +155,54 @@ int main(){
 
         // once all players are dead, process the population and prepare the next generation
         if (players.empty()) {
-            printf("Generation: %d\n", generation);
+            //printf("Generation: %d\n", generation);
             players.clear();
             obstacles.clear();
 
-            auto parents = selectParents(deadPlayers);
+            /*printf("Generation: %d\n", generation);
+            for (auto p : deadPlayers){
+                printf("%d\n", p.fitness_score);
+            }
+            printf("\n");*/
+
+            // convert population to genomes
+            std::vector<Genome> genomePop;
+            for (auto p : deadPlayers)
+                genomePop.push_back(Genome(
+                        p.network.nodes,
+                        p.network.inputs,
+                        p.network.outputs,
+                        p.network.layer_size,
+                        p.network.hidden_layers,
+                        p.fitness_score));
+
+            // create new population
+            std::vector<Genome> newGenomePop;
+            /*
+             * loop:
+             *      select parents, crossover and mutate, add to new pop
+             */
+            while (newGenomePop.size() < config["pop_size"]){
+                auto parents = Genome::RouletteSelection(genomePop);
+                auto children = Genome::Crossover(parents);
+
+                children.first.Mutate();
+                children.second.Mutate();
+
+                newGenomePop.push_back(children.first);
+                newGenomePop.push_back(children.second);
+            }
+            // turn Genome populations into networks and assign to players and set as the new population
+            for (int i=0; i < config["pop_size"]; i++){
+                Player p = Player(&gameFloor);
+                p.network = nn::Network(newGenomePop[i]);
+                players.push_back(p);
+            }
+
+           /* auto parents = selectParents(deadPlayers);
             auto offspring = createOffspring(parents);
 
-            createPopulation(offspring);
+            createPopulation(offspring);*/
             deadPlayers.clear();
             generation++;
 

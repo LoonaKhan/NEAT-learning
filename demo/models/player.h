@@ -10,6 +10,7 @@
 #include "../config/config.h"
 #include "../nn_models/network.h"
 #include "../floor/floor.h"
+#include "cmath"
 
 extern int id; // ID's to differentiate players
 class Player : public sf::RectangleShape {

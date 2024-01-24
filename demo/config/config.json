@@ -1,5 +1,8 @@
 {
   "w_size": [800,600],
   "sim_speed": 4,
-  "pop_size": 50
+  "pop_size": 50,
+  "mut_rate": 0.001,
+  "mut_amt": 1.0,
+  "crossover_rate": 0.7
 }
